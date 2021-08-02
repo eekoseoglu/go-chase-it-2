@@ -1,7 +1,6 @@
 #include "ros/ros.h"
 #include "geometry_msgs/Twist.h"
 #include "ball_chaser/DriveToTarget.h"
-//DONE: Include the ball_chaser "DriveToTarget" header file
 
 // ROS::Publisher motor commands;
 ros::Publisher motor_command_publisher;
@@ -15,14 +14,12 @@ bool handle_drive_request(ball_chaser::DriveToTarget::Request& req,
     
     ROS_INFO_STREAM("DriveToTarget Request received. Linear_x, Angular_z: " + std::to_string((float)req.linear_x) + ", " + std::to_string((float)req.angular_z));
 
-    while (ros::ok()) {
-        // Create a motor_command object of type geometry_msgs::Twist
-        geometry_msgs::Twist motor_command;
-        motor_command.linear.x = req.linear_x;
-        motor_command.angular.z = req.angular_z;
-        // Publish angles to drive the robot
-        motor_command_publisher.publish(motor_command);
-    }
+    // Create a motor_command object of type geometry_msgs::Twist
+    geometry_msgs::Twist motor_command;
+    motor_command.linear.x = req.linear_x;
+    motor_command.angular.z = req.angular_z;
+    // Publish angles to drive the robot
+    motor_command_publisher.publish(motor_command);
 
     res.msg_feedback = "Linear/angular velocities set: " + std::to_string((float)req.linear_x) + " / " + std::to_string((float)req.angular_z);
     ROS_INFO_STREAM(res.msg_feedback);
@@ -40,11 +37,8 @@ int main(int argc, char** argv)
     // Inform ROS master that we will be publishing a message of type geometry_msgs::Twist on the robot actuation topic with a publishing queue size of 10
     motor_command_publisher = n.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
 
-    // DONE: Define a drive /ball_chaser/command_robot service with a handle_drive_request callback function
     ros::ServiceServer service = n.advertiseService("/ball_chaser/command_robot", handle_drive_request);
-    
 
-    // DONE: Handle ROS communication events
     ros::spin();
 
     return 0;
